@@ -1,0 +1,140 @@
+.bg-black {
+    background-color: black;
+}
+
+.bg-white {
+    background-color: $white-200;
+}
+
+.bg-purple {
+    background-color: $purple-900;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}
+
+.jc-center {
+    justify-content: center;
+}
+
+.jc-between {
+    justify-content: space-between;
+}
+
+.ai-center {
+    align-items: center;
+}
+
+.gap-8 {
+    gap: 8px;
+}
+
+.gap-15 {
+    gap: 15px;
+}
+
+.gap-25 {
+    gap: 25px;
+}
+
+.gap-30 {
+    gap: 30px;
+}
+
+.gap-48 {
+    gap: 48px;
+}
+
+.gap-55 {
+    gap: 55px;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.p-16 {
+    padding: 16px;
+}
+
+.px-80 {
+    padding-left: 80px;
+    padding-right: 80px;
+}
+
+.px-95 {
+    padding-left: 95px;
+    padding-right: 95px;
+}
+
+.py-30 {
+    padding-top: 30px;
+    padding-bottom: 30px;   
+}
+
+.py-32 {
+    padding-top: 32px;
+    padding-bottom: 32px; 
+}
+
+.py-40 {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.py-48 {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
+
+.py-60 {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.pb-60 {
+    padding-bottom: 60px;
+}
+
+.my-30 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.my-60 {
+    margin-top: 60px;
+    margin-bottom: 60px;
+}
+
+.mt-40 {
+    margin-top: 40px;
+}
+
+.mb-6 {
+    margin-bottom: 6px;
+}
+
+.mb-8 {
+    margin-bottom: 8px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.mb-28 {
+    margin-bottom: 28px;
+}
+
+.mb-32 {
+    margin-bottom: 32px;
+}
+
+.mb-48 {
+    margin-bottom: 48px;
+}

@@ -1,0 +1,39 @@
+.compare-table {
+    tr {
+        border-bottom: 1px solid $gray-800;
+    }
+    th {
+        padding: 15px 30px;
+    }
+    td {
+        padding: 15px;
+    }
+}
+
+.cart-table {
+    font-size: 20px;
+    thead {
+        font-weight: bold;
+        text-align: left;
+    }
+    tbody tr {
+        border-bottom: 1px solid $gray-400;
+    }
+    td {
+        padding: 20px 0;
+        vertical-align: middle;
+    }
+}
+
+.order-table {
+    th, td {
+        font-size: 14px;
+        border: 1px solid black;
+    }
+    th {
+        padding: 12px 10px;
+    }
+    td {
+        padding: 12px 10px 20px 10px;
+    }
+}

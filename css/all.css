@@ -1,0 +1,492 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap");
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: "";
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+*, *::after, *::before {
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+a:hover {
+  color: #6A33F8;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+body {
+  font-family: "Noto Sans TC", sans-serif;
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+label {
+  display: block;
+}
+
+input {
+  border: 1px solid #797979;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+select {
+  min-width: 255px;
+  color: #797979;
+  border: 1px solid #797979;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.container {
+  max-width: 1110px;
+  margin: 0 auto;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.fs-1 {
+  font-size: 32px;
+}
+
+.fs-2, .material-icons.done {
+  font-size: 28px;
+}
+
+.fs-3 {
+  font-size: 24px;
+}
+
+.fs-4 {
+  font-size: 20px;
+}
+
+.fs-5 {
+  font-size: 1rem;
+}
+
+.fs-6 {
+  font-size: 14px;
+}
+
+.fs-7 {
+  font-size: 12px;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.text-white {
+  color: white;
+}
+
+.text-purple-light, .material-icons.done {
+  color: #6A33FF;
+}
+
+.text-purple-dark {
+  color: #6A33F8;
+}
+
+.text-muted {
+  color: #797979;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-end {
+  text-align: right;
+}
+
+.text-delete {
+  text-decoration: line-through;
+}
+
+.bg-black {
+  background-color: black;
+}
+
+.bg-white {
+  background-color: #F8F8F8;
+}
+
+.bg-purple {
+  background-color: #301E5F;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.jc-center {
+  justify-content: center;
+}
+
+.jc-between {
+  justify-content: space-between;
+}
+
+.ai-center {
+  align-items: center;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-15 {
+  gap: 15px;
+}
+
+.gap-25 {
+  gap: 25px;
+}
+
+.gap-30 {
+  gap: 30px;
+}
+
+.gap-48 {
+  gap: 48px;
+}
+
+.gap-55 {
+  gap: 55px;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.p-16 {
+  padding: 16px;
+}
+
+.px-80 {
+  padding-left: 80px;
+  padding-right: 80px;
+}
+
+.px-95 {
+  padding-left: 95px;
+  padding-right: 95px;
+}
+
+.py-30 {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.py-32 {
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.py-40 {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.py-48 {
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.py-60 {
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+.pb-60 {
+  padding-bottom: 60px;
+}
+
+.my-30 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.my-60 {
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.mb-6 {
+  margin-bottom: 6px;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.mb-28 {
+  margin-bottom: 28px;
+}
+
+.mb-32 {
+  margin-bottom: 32px;
+}
+
+.mb-48 {
+  margin-bottom: 48px;
+}
+
+.btn {
+  cursor: pointer;
+  border-style: none;
+  background-color: transparent;
+  padding: 0;
+}
+
+.btn-primary, .btn-primary-small {
+  background: black;
+  padding: 10px 68px;
+  border-radius: 4px;
+  font-size: 20px;
+  color: white;
+}
+
+.btn-primary-small {
+  font-size: 14px;
+  padding: 8px;
+}
+
+.btn-outline {
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 10px 20px;
+}
+.btn-outline:hover {
+  background: black;
+  color: white;
+}
+
+.btn-red {
+  background-color: #C72424;
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: white;
+}
+
+.material-icons {
+  display: block;
+}
+
+.material-icons.done {
+  font-weight: bold;
+  vertical-align: bottom;
+}
+
+button .material-icons:hover {
+  color: #6A33FF;
+}
+
+.step-circle {
+  width: 115px;
+  height: 115px;
+  border: 3px solid black;
+  border-radius: 50%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.step-circle .material-icons {
+  font-size: 50px;
+}
+
+.input-small {
+  max-width: 50px;
+  padding: 8px;
+}
+
+.compare-table tr {
+  border-bottom: 1px solid #797979;
+}
+.compare-table th {
+  padding: 15px 30px;
+}
+.compare-table td {
+  padding: 15px;
+}
+
+.cart-table {
+  font-size: 20px;
+}
+.cart-table thead {
+  font-weight: bold;
+  text-align: left;
+}
+.cart-table tbody tr {
+  border-bottom: 1px solid #CED4DA;
+}
+.cart-table td {
+  padding: 20px 0;
+  vertical-align: middle;
+}
+
+.order-table th, .order-table td {
+  font-size: 14px;
+  border: 1px solid black;
+}
+.order-table th {
+  padding: 12px 10px;
+}
+.order-table td {
+  padding: 12px 10px 20px 10px;
+}
+
+.slogan {
+  position: relative;
+}
+.slogan-title {
+  position: absolute;
+  bottom: 90px;
+  left: 52px;
+}
+
+.top-list, .bottom-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  overflow: scroll;
+}
+.top-list::-webkit-scrollbar, .bottom-list::-webkit-scrollbar {
+  display: none;
+}
+
+.products-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+.products-list .btn {
+  border-radius: 0px;
+  padding: 12px;
+}
+
+.card-img {
+  overflow: hidden;
+}
+.card-img img:hover {
+  transition: all 0.75s ease;
+  transform: scale(1.2);
+}
+
+.order-form input, .order-form select {
+  min-width: 350px;
+}
+.order-form .input {
+  position: relative;
+}
+.order-form .feedback {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  color: #C72424;
+  width: 100%;
+  padding-left: 16px;
+}
+
+.order-status {
+  color: #6A33F8;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.order-status:hover {
+  color: #301E5F;
+}
+
+.chart-type {
+  min-width: 50px;
+  height: 100%;
+  padding: 6px;
+}
+
+.order-detail li:not(:last-child) {
+  padding-bottom: 8px;
+  border-bottom: 1px dotted black;
+}
+.order-detail li:not(:first-child) {
+  padding-top: 8px;
+}/*# sourceMappingURL=all.css.map */

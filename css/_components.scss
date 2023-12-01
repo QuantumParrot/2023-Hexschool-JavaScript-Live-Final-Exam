@@ -1,0 +1,73 @@
+.btn {
+    cursor: pointer;
+    border-style: none;
+    background-color: transparent;
+    padding: 0;
+}
+
+.btn-primary {
+    background: black;
+    padding: 10px 68px;
+    border-radius: 4px;
+    font-size: 20px;
+    color: white;
+}
+
+.btn-primary-small {
+    @extend .btn-primary;
+    font-size: 14px;
+    padding: 8px;
+}
+
+.btn-outline {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 10px 20px;
+    &:hover {
+        background: black;
+        color: white;
+    }
+}
+
+.btn-red {
+    background-color: $red-900;
+    border-radius: 4px;
+    padding: 8px 16px;
+    color: white;
+}
+
+.material-icons {
+    display: block;
+}
+
+.material-icons.done {
+    @extend .fs-2;
+    @extend .text-purple-light;
+    font-weight: bold;
+    vertical-align: bottom;
+}
+
+button .material-icons {
+    &:hover {
+        color: $purple-700;
+    }
+}
+
+.step-circle {
+    width:  115px;
+    height: 115px;
+    border: 3px solid black;
+    border-radius: 50%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .material-icons {
+        font-size: 50px;
+    }
+}
+
+.input-small {
+    max-width: 50px;
+    padding: 8px;
+}

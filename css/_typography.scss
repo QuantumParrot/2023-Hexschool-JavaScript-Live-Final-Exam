@@ -1,0 +1,59 @@
+.fs-1 {
+    font-size: 32px;
+}
+
+.fs-2 {
+    font-size: 28px;
+}
+
+.fs-3 {
+    font-size: 24px;
+}
+
+.fs-4 {
+    font-size: 20px;
+}
+
+.fs-5 {
+    font-size: 1rem;
+}
+
+.fs-6 {
+    font-size: 14px;
+}
+
+.fs-7 {
+    font-size: 12px;
+}
+
+.fw-bold {
+    font-weight: bold;
+}
+
+.text-white {
+    color: white;
+}
+
+.text-purple-light {
+    color: $purple-700;
+}
+
+.text-purple-dark {
+    color: $purple-800;
+}
+
+.text-muted {
+    color: $gray-800;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-end {
+    text-align: right;
+}
+
+.text-delete {
+    text-decoration: line-through;
+}
