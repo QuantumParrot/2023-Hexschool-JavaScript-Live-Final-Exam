@@ -1,7 +1,21 @@
+import { toastMessage, showConfirmMessage, errorHandle } from "./js/message.js";
+
+const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/admin/ataraxia/orders';
+
+const token = "hobkokT4X2RiONmH0o9406YqlIy1";
+
+const headers = { 
+    headers: {
+        authorization: token
+    }
+};
+
 let data = [];
 
 const chartSelector = document.querySelector('.chart-type');
 chartSelector.addEventListener('change', changeChart);
+
+// 環境初始化
 
 (function init(){
 
@@ -12,24 +26,22 @@ chartSelector.addEventListener('change', changeChart);
 
 })();
 
-function getOrders() {
-    
-    const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/admin/ataraxia/orders';
-    const token = "hobkokT4X2RiONmH0o9406YqlIy1";
+// 取得訂單列表
 
-    axios.get(apiUrl, {
-        headers: {
-            authorization: token
-        }
-    })
+function getOrders() {
+
+    axios.get(apiUrl, headers)
     .then(res => {
+        const chart = document.querySelector('#chart-display');
         data = res.data.orders.sort((a,b)=>a.createdAt-b.createdAt);
-        renderCharts(chartSelector.value);
-        renderOrders();
+        data.length ? renderCharts(chartSelector.value) : chart.style.display = 'none';
+        renderOrders(data);
     })
-    .catch(error => { console.log(error) })
+    .catch(error => errorHandle(error))
 
 }
+
+// 改變圖表
 
 function changeChart(e) {
 
@@ -87,10 +99,17 @@ function renderCharts(value) {
 
         // 3. 做成新的物件
     
-        const rank = { 其它: 0 };
+        const rank = {};
         
-        Object.keys(products).sort((a,b)=>products[b]-products[a])
-        .forEach((key, index) => index < 3 ? rank[key] = products[key] : rank["其它"] += products[key]);
+        const productsSorted = Object.keys(products).sort((a,b)=>products[b]-products[a]);
+
+        if (productsSorted.length > 3) { rank["其它"] = 0 }
+
+        productsSorted.forEach((key, index) => {
+            
+            index < 3 ? rank[key] = products[key] : rank["其它"] += products[key]
+
+        });
     
         Object.keys(rank).forEach(key => chartData.push([key, +(rank[key]/total*100).toFixed(2)]));
 
@@ -106,7 +125,9 @@ function renderCharts(value) {
 
 }
 
-function renderOrders() {
+// 渲染訂單列表
+
+function renderOrders(data) {
     
     // console.log(data);
 
@@ -180,6 +201,8 @@ function renderOrders() {
 
 }
 
+// 監聽訂單表格
+
 function ordersListener(e) {
 
     const { nodeName } = e.target;
@@ -194,68 +217,42 @@ function ordersListener(e) {
 
 }
 
-function toggleStatus(id, status) {
+// 修改訂單狀態
 
-    const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/admin/ataraxia/orders';
-    const token = "hobkokT4X2RiONmH0o9406YqlIy1";
+function toggleStatus(id, status) {
 
     axios.put(apiUrl, {
         data: {
             id,
             paid: status === '處理中' ? true : false,
         }
-    },
-    {
-        headers: {
-            authorization: token,
-        }
-    })
+    }, headers)
     .then(res => {
+        // console.log(res);
         toastMessage('success','成功修改訂單狀態！');
-        getOrders();
+        renderOrders(res.data.orders);
     })
-    .catch(error => { console.log(error) })
+    .catch(error => errorHandle(error))
 
 }
+
+// 刪除單筆或全部訂單
 
 function deleteOrders(id) {
 
-    const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/admin/ataraxia/orders';
-    const token = "hobkokT4X2RiONmH0o9406YqlIy1";
-
-    Swal.fire({
+    showConfirmMessage({
+        title: `確定刪除${id ? '這筆' : '全部'}訂單？`,
         icon: 'warning',
-        title: id ? '確定刪除？' : '確定刪除全部訂單？',
         text: '此操作無法復原',
-        showCancelButton: true,
-        cancelButtonText: '取消',
-        confirmButtonText: '確定',
-        showLoaderOnConfirm: true,
-        preConfirm: async() => {
+        fn: async() => {
             try {
 
-                const res = await axios.delete(`${apiUrl}${id ? `/${id}` : ''}`, {
-                    headers: {
-                        authorization: token
-                    }
-                });
+                const res = await axios.delete(`${apiUrl}${id ? `/${id}` : ''}`, headers);
                 toastMessage('success','成功刪除訂單！');
                 getOrders();
 
-            } catch(error) { console.log(error) }
+            } catch(error) { errorHandle(error) }
         }
     })
 
-}
-
-// 提示訊息元件
-
-function toastMessage(icon, text) {
-    Swal.fire({
-        icon,
-        text,
-        toast: true,
-        showConfirmButton: false,
-        timer: 1500,
-    })
 }

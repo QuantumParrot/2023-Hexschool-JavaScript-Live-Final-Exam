@@ -1,10 +1,11 @@
+import { toastMessage, tweakMessage, showConfirmMessage, errorHandle } from "./js/message.js";
+import toThousands from "./js/number.js";
+import orderConstraints from "./js/validation.js";
+
 const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/customer/ataraxia';
 
-const carts = document.querySelector('#carts');
-carts.addEventListener('click', cartsListener);
-
-const form = document.querySelector('.order-form');
-form.addEventListener('submit', checkOrder);
+let productData = [];
+let cartsData = [];
 
 // 環境初始化
 
@@ -21,17 +22,18 @@ form.addEventListener('submit', checkOrder);
 function getProducts() {
     axios.get(`${apiUrl}/products`)
     .then(res => {
-        renderCategoryOptions(res.data.products);
-        renderProducts(res.data.products);
+        productData = res.data.products;
+        renderCategoryOptions(productData);
+        renderProducts(productData);
     })
-    .catch(error => { console.log(error) })
+    .catch(error => errorHandle(error))
 }
 
 // 動態新增篩選按鈕＋綁定監聽事件
 
-function renderCategoryOptions(data) {
+const category = document.querySelector('#category');
 
-    const category = document.querySelector('#category');
+function renderCategoryOptions(data) {
     
     const categories = [];
     data.forEach(item => categories.includes(item.category) ? null : categories.push(item.category));
@@ -43,27 +45,28 @@ function renderCategoryOptions(data) {
         category.appendChild(option);
     })
 
-    category.addEventListener('change', function(e){
-
-       if (e.target.value === '全部') {
-
-           renderProducts(data);
-
-       } else {
-
-           renderProducts(data.filter(item => item.category === e.target.value));
-
-       }
-
-    });
-
 }
+
+category.addEventListener('change', function(e){
+
+    if (e.target.value === '全部') {
+
+        renderProducts(productData);
+
+    } else {
+
+        renderProducts(productData.filter(item => item.category === e.target.value));
+
+    }
+
+});
 
 // 渲染商品列表
 
+const productsList = document.querySelector('#products');
+
 function renderProducts(data) {
 
-    const productsList = document.querySelector('#products');
     let str = '';
     
     data.forEach(item => str += /*html*/`
@@ -81,28 +84,32 @@ function renderProducts(data) {
         </div>
     </li>
     `);
+
     productsList.innerHTML = str;
 
-    productsList.addEventListener('click', function(e){
-        if (e.target.nodeName === 'BUTTON') { addCartItem(e.target.dataset.id) }
-    })
-
 }
+
+productsList.addEventListener('click', function(e){
+
+    if (e.target.nodeName === 'BUTTON') { addCartItem(e.target) }
+
+})
 
 // 取得購物車資料
 
 function getCarts() {
     axios.get(`${apiUrl}/carts`)
     .then(res => {
+        cartsData = res.data.carts;
         renderCarts(res.data);
     })
-    .catch(error => { console.log(error) })
+    .catch(error => errorHandle(error))
 }
 
 // 渲染購物車資料
 
 function renderCarts(data) {
-
+    
     let str = '';
 
     if (data.carts.length) {
@@ -111,9 +118,9 @@ function renderCarts(data) {
         <table class="cart-table w-100 mb-20">
             <thead>
                 <tr>
-                    <th width="40%">品項</th>
+                    <th width="45%">品項</th>
                     <th width="15%">單價</th>
-                    <th width="20%">數量</th>
+                    <th width="15%">數量</th>
                     <th width="15%">金額</th>
                     <th width="10%"></th>
                 </tr>
@@ -141,13 +148,8 @@ function renderCarts(data) {
             <td><div>${toThousands(item.product.price)}</div></td>
             <td>
                 <div class="d-flex ai-center gap-8">
-                    <form>
-                        <input type="number"
-                               class="input-small"
-                               name="quantity"
-                               value="${item.quantity}"
-                               min="1">
-                        <button type="submit" class="change-qty btn btn-primary-small">修改數量</button>
+                    <form class="qty-form">
+                        <input class="input-small" type="number" name="quantity" value="${item.quantity}">
                     </form>
                 </div>
             </td>
@@ -160,6 +162,9 @@ function renderCarts(data) {
         </tr>
         `);
         tableContent.innerHTML = str;
+
+        const qtyForms = tableContent.querySelectorAll('.qty-form');
+        qtyForms.forEach(form => form.addEventListener('change', checkItemQty));
 
     } else {
 
@@ -287,9 +292,12 @@ function renderRecommendation() {
 
 }
 
-function cartsListener(e) {
+// 監聽購物車表格
 
-    e.preventDefault();
+const carts = document.querySelector('#carts');
+carts.addEventListener('click', cartsListener);
+
+function cartsListener(e) {
 
     if (!e.target.closest('button')) return;
 
@@ -297,38 +305,12 @@ function cartsListener(e) {
 
     if (classList.contains('delete-all')) {
         
-        deleteAllCartItem();
+        deleteAllCartItem(e.target);
             
     } else if (classList.contains('delete')) {
 
         const id = e.target.closest('tr').dataset.id;
         deleteCartItem(id);
-
-    } else if (classList.contains('change-qty')) {
-
-        const id = e.target.closest('tr').dataset.id;
-
-        const form = e.target.closest('form');
-        const currentValue = Number(form.querySelector('input').getAttribute('value'));
-        const newValue = Number(form.querySelector('input').value);
-
-        if (currentValue === newValue) return;
-
-        const constraints = {
-            quantity: {
-                numericality: {
-                    strict: true,
-                    onlyInteger: true,
-                    greaterThanOrEqualTo: 1,
-                    message: "數量必須是不為零的正整數"
-                }
-            }
-        }
-        
-        const error = validate(form, constraints);
-        
-        error ? 
-        toastMessage('warning', tweakMessage(error.quantity[0])) : changeItemQty(id, newValue);
 
     }
 
@@ -336,63 +318,110 @@ function cartsListener(e) {
 
 // 新增商品至購物車
 
-function addCartItem(id) {
-    axios.post(`${apiUrl}/carts`, {
-        data: {
-            productId: id,
-            quantity: 1,
-        }
-    })
-    .then(res => {
-        toastMessage('success','成功加入購物車！');
-        getCarts();
-    })
-    .catch(error => { console.log(error) })
+function addCartItem(button) {
+
+    const id = button.dataset.id;
+    const target = cartsData.find(cart => cart.product.id === id);
+
+    button.setAttribute('disabled','true');
+
+    if (target) {
+
+        let { id, quantity } = target;
+        quantity ++
+        changeItemQty(id, quantity);
+
+    } else {
+
+        axios.post(`${apiUrl}/carts`, {
+            data: {
+                productId: id,
+                quantity: 1,
+            }
+        })
+        .then(res => {
+            toastMessage('success','成功加入購物車！');
+            button.removeAttribute('disabled');
+            getCarts();
+        })
+        .catch(error => { 
+            errorHandle(error);
+            button.removeAttribute('disabled');
+        })
+
+    }
+
+    button.removeAttribute('disabled');
+
 }
 
 // 刪除購物車的商品
 
 function deleteCartItem(id) {
-    Swal.fire({
-        icon: 'warning',
-        title: '確定刪除？',
-        showCancelButton: true,
-        cancelButtonText: '取消',
-        confirmButtonText: '確定',
-        showLoaderOnConfirm: true,
-        preConfirm: async() => {
-            try {
 
+    showConfirmMessage({
+        title: '確定刪除商品？',
+        icon: 'warning',
+        fn: async() => {
+            try {
                 const res = await axios.delete(`${apiUrl}/carts/${id}`);
                 toastMessage('success','成功刪除商品！');
-                getCarts();
-
-            } catch(error) { console.log(error) }
+                renderCarts(res.data);
+            } catch(error) { errorHandle(error) }
         }
     })
+
 }
 
-function deleteAllCartItem() {
-    Swal.fire({
-        icon: 'warning',
-        title: '確定刪除全部商品？',
-        showCancelButton: true,
-        cancelButtonText: '取消',
-        confirmButtonText: '確定',
-        showLoaderOnConfirm: true,
-        preConfirm: async() => {
-            try {
+function deleteAllCartItem(button) {
 
+    showConfirmMessage({
+        title: '確定刪除全部商品？',
+        icon: 'warning',
+        fn: async() => {
+            try {
+                button.setAttribute('disabled','true');
                 const res = await axios.delete(`${apiUrl}/carts`);
                 toastMessage('success','成功刪除全部商品！');
-                getCarts();
-                
-            } catch(error) { console.log(error) }
+                renderCarts(res.data);
+                button.removeAttribute('disabled');
+            } catch(error) { 
+                errorHandle(error);
+                button.removeAttribute('disabled');
+            }
         }
-    }) 
+    })
+
 }
 
 // 修改商品數量
+
+function checkItemQty(e) {
+
+    const id = e.target.closest('tr').dataset.id;
+
+    const currentValue = Number(e.target.getAttribute('value'));
+    const newValue = Number(e.target.value);
+
+    if (currentValue === newValue) return;
+
+    const constraints = {
+        quantity: {
+            numericality: {
+                strict: true,
+                onlyInteger: true,
+                greaterThanOrEqualTo: 1,
+                message: "必須是不為零的正整數"
+            }
+        }
+    }
+    
+    const error = validate({ quantity: newValue }, constraints);
+    
+    error ? 
+    toastMessage('warning', tweakMessage(error.quantity[0])) : changeItemQty(id, newValue);
+
+}
 
 function changeItemQty(id, quantity) {
     axios.patch(`${apiUrl}/carts`, {
@@ -405,50 +434,23 @@ function changeItemQty(id, quantity) {
 
         toastMessage('success','成功修改商品數量！');
         getCarts();
+
+        // 因為要及時修改儲存至全域變數的購物車資料，所以這裡無法使用 renderCarts(res.data)
     
     })
-    .catch(error => { console.log(error) })
+    .catch(error => errorHandle(error))
 }
 
-// 新增訂單
+// 驗證表單
+
+const form = document.querySelector('.order-form');
+form.addEventListener('submit', checkOrder);
 
 function checkOrder(e) {
 
     e.preventDefault();
 
-    const constraints = {
-        name: {
-            presence: {
-                message: '必填！'
-            }
-        },
-        tel: {
-            presence: {
-                message: '必填！'
-            }
-        },
-        email: {
-            presence: {
-                message: '必填！'
-            },
-            email: {
-                message: '格式不正確！'
-            }
-        },
-        address: {
-            presence: {
-                message: '必填！'
-            }
-        },
-        payment: {
-            presence: {
-                message: '必選！'
-            }
-        }
-
-    };
-
-    const errors = validate(e.target, constraints);
+    const errors = validate(e.target, orderConstraints);
 
     if (errors) {
 
@@ -462,8 +464,8 @@ function checkOrder(e) {
         
         const info = { user: {} };
 
-        Object.keys(constraints).forEach(attr => {
-            const value = e.target.querySelector(`[name=${attr}]`).value;
+        Object.keys(orderConstraints).forEach(attr => {
+            const value = e.target.querySelector(`[name=${attr}]`).value.trim();
             info.user[attr] = value;
             info.time = new Date().toDateString();
         });
@@ -474,15 +476,36 @@ function checkOrder(e) {
 
 }
 
+form.addEventListener('input', function(e){
+    const feedback = e.target.nextElementSibling;
+    feedback.textContent = '';
+})
+
+const inputs = form.querySelectorAll('[name]');
+
+inputs.forEach(input => input.addEventListener('blur', function(e){
+
+    const { name } = e.target;
+
+    const error = validate(form, orderConstraints);
+    
+    if (error[name]) {
+
+        const feedback = e.target.nextElementSibling;
+        feedback.textContent = tweakMessage(error[name][0]);
+
+    }
+
+}))
+
+// 新增訂單
+
 function createOrder(data) {
-    Swal.fire({
-        icon: 'warning',
+
+    showConfirmMessage({
         title: '確定送出訂單？',
-        showCancelButton: true,
-        cancelButtonText: '取消',
-        confirmButtonText: '確定',
-        showLoaderOnConfirm: true,
-        preConfirm: async() => {
+        icon: 'warning',
+        fn: async() => {
             try {
 
                 const res = await axios.post(`${apiUrl}/orders`, { data });
@@ -490,43 +513,8 @@ function createOrder(data) {
                 form.reset();
                 getCarts();
 
-            } catch(error) { 
-                
-                console.log(error);
-                toastMessage('error', error.response.data.message);
-            
-            }
+            } catch(error) { errorHandle(error) }
         }
     })
-}
 
-form.addEventListener('input', function(e){
-    const feedback = e.target.nextElementSibling;
-    feedback.textContent = '';
-})
-
-// 提示訊息視窗
-
-function toastMessage(icon, text) {
-    Swal.fire({
-        icon,
-        text,
-        toast: true,
-        showConfirmButton: false,
-        timer: 1500,
-    })
-}
-
-// 千分位
-
-function toThousands(num) {
-    return num.toString().split('.')
-           .map((item, index) => index === 0 ? item.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : item)
-           .join('.');
-}
-
-// 調整表單驗證提示文字
-
-function tweakMessage(str) {
-    return str.replace(/\w+/,'');
 }
