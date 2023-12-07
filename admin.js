@@ -1,4 +1,5 @@
 import { toastMessage, showConfirmMessage, errorHandle } from "./js/message.js";
+import { sortOrders } from "./js/helper.js";
 
 const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/admin/ataraxia/orders';
 
@@ -33,7 +34,7 @@ function getOrders() {
     axios.get(apiUrl, headers)
     .then(res => {
         const chart = document.querySelector('#chart-display');
-        data = res.data.orders.sort((a,b)=>a.createdAt-b.createdAt);
+        data = sortOrders(res.data.orders);
         data.length ? renderCharts(chartSelector.value) : chart.style.display = 'none';
         renderOrders(data);
     })
@@ -230,7 +231,7 @@ function toggleStatus(id, status) {
     .then(res => {
         // console.log(res);
         toastMessage('success','成功修改訂單狀態！');
-        renderOrders(res.data.orders);
+        renderOrders(sortOrders(res.data.orders));
     })
     .catch(error => errorHandle(error))
 

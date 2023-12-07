@@ -1,5 +1,5 @@
+import { debounce, toThousands } from "./js/helper.js";
 import { toastMessage, tweakMessage, showConfirmMessage, errorHandle } from "./js/message.js";
-import toThousands from "./js/number.js";
 import orderConstraints from "./js/validation.js";
 
 const apiUrl = 'https://livejs-api.hexschool.io/api/livejs/v1/customer/ataraxia';
@@ -108,6 +108,8 @@ function getCarts() {
 
 // 渲染購物車資料
 
+const debouncer = debounce(checkItemQty, 500);
+
 function renderCarts(data) {
     
     let str = '';
@@ -164,7 +166,7 @@ function renderCarts(data) {
         tableContent.innerHTML = str;
 
         const qtyForms = tableContent.querySelectorAll('.qty-form');
-        qtyForms.forEach(form => form.addEventListener('change', checkItemQty));
+        qtyForms.forEach(form => form.addEventListener('change', (e) => { debouncer(e) }));
 
     } else {
 
