@@ -100,8 +100,9 @@ productsList.addEventListener('click', function(e){
 function getCarts() {
     axios.get(`${apiUrl}/carts`)
     .then(res => {
-        cartsData = res.data.carts;
+
         renderCarts(res.data);
+
     })
     .catch(error => errorHandle(error))
 }
@@ -111,6 +112,8 @@ function getCarts() {
 const debouncer = debounce(checkItemQty, 500);
 
 function renderCarts(data) {
+
+    cartsData = data.carts;
     
     let str = '';
 
@@ -151,7 +154,7 @@ function renderCarts(data) {
             <td>
                 <div class="d-flex ai-center gap-8">
                     <form class="qty-form">
-                        <input class="input-small" type="number" name="quantity" value="${item.quantity}">
+                        <input class="input-small" type="number" name="quantity" value="${item.quantity}" min=1>
                     </form>
                 </div>
             </td>
